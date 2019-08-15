@@ -11,6 +11,7 @@ flask = "*"
 flask-login = "*"
 flask-bcrypt = "*"
 flask-wtf = "*"
+python-slugify = "*"
 
 [requires]
 python_version = "3.6"

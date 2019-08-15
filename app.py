@@ -1,5 +1,6 @@
 from flask import Flask, g, render_template, redirect, flash, url_for
 
+
 import forms
 import models
 import datetime
@@ -28,7 +29,6 @@ def after_request(response):
 
 @app.route('/')
 @app.route('/entries')
-
 def index():
     journals = models.Journal.select()
     return render_template('index.html', journals = journals)
@@ -56,10 +56,9 @@ def new():
     return render_template('new.html', form = form)
 
 
-@app.route('/entries/<int:id>', methods=('GET','POST'))
+@app.route('/entries/<int:id>')
 def detail(id):
     journal = models.Journal.get(models.Journal.id == id)
-
     return render_template('detail.html', journal = journal)
 
 @app.route('/entries/<int:id>/edit', methods=('GET', 'POST'))
@@ -94,14 +93,15 @@ def delete(id):
 
 if __name__ == '__main__':
     models.initialize()
-    """ try:
+    try:
         models.Journal.create_journal(
-                title = 'python',
+                title = 'python flask journal web',
                 date = datetime.date.today(),
                 time_spent = 2,
                 what_you_lean = "web side flask",
-                resource_to_remember = "treehouse")
+                resource_to_remember = "treehouse",
+                tag = "test")
     except ValueError:
         pass
-    """
+
     app.run(debug=DEBUG, host=HOST, port=PORT)
