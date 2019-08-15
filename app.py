@@ -1,0 +1,102 @@
+from flask import Flask, g, render_template, redirect, flash, url_for
+
+import forms
+import models
+import datetime
+
+DEBUG = True
+PORT = 8000
+HOST = '0.0.0.0'
+
+app = Flask(__name__)
+app.secret_key = 'sdlhery734t4fVG$#TI4ugf48hof'
+
+
+@app.before_request
+def before_request():
+    """Connect to the database before each request."""
+    g.db = models.DATABASE
+    g.db.connect()
+
+
+@app.after_request
+def after_request(response):
+    """Close the database connection after each request."""
+    g.db.close()
+    return response
+
+
+@app.route('/')
+@app.route('/entries')
+def index():
+    journals = models.Journal.select()
+    return render_template('index.html', journals = journals)
+
+
+@app.route('/entries/new', methods=('GET', 'POST'))
+def new():
+    form = forms.JournalForm()
+    if form.validate_on_submit():
+        flash(" submit success!! ")
+        models.Journal.create_journal(
+            title = form.title.data,
+            date = form.date.data,
+            time_spent = form.time_spent.data,
+            what_you_lean = form.what_you_lean.data,
+            resource_to_remember = form.resource_to_remember.data
+        )
+        return redirect(url_for('index'))
+
+    return render_template('new.html', form = form)
+
+
+@app.route('/entries/<int:id>', methods=('GET','POST'))
+def detail(id):
+    journal = models.Journal.get(models.Journal.id == id)
+
+    return render_template('detail.html', journal = journal)
+
+@app.route('/entries/<int:id>/edit', methods=('GET', 'POST'))
+def edit(id):
+    form = forms.JournalForm()
+    journal = models.Journal.get(models.Journal.id == id)
+    if form.validate_on_submit():
+        # from update query http://docs.peewee-orm.com/en/latest/peewee/api.html#Model.update
+        q = models.Journal.update(
+            title = form.title.data,
+            date = form.date.data,
+            time_spent = form.time_spent.data,
+            resource_to_remember = form.resource_to_remember.data
+        ).where(models.Journal.id == id)
+        q.execute()
+        # from end
+        return redirect(url_for('detail', id=journal.id))
+
+    return render_template('edit.html', form=form , journal=journal)
+
+@app.route('/entries/<int:id>/delete')
+def delete(id):
+    try:
+
+        models.Journal.get(models.Journal.id == id).delete_instance()
+
+    except models.IntegrityError:
+        flash("IntegrityError")
+
+    return redirect(url_for('index'))
+
+
+
+if __name__ == '__main__':
+    models.initialize()
+    """ try:
+        models.Journal.create_journal(
+                title = 'python',
+                date = datetime.date.today(),
+                time_spent = 2,
+                what_you_lean = "web side flask",
+                resource_to_remember = "treehouse")
+    except ValueError:
+        pass
+    """
+    app.run(debug=DEBUG, host=HOST, port=PORT)

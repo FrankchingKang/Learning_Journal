@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+            <div class="container">
+                <div class="new-entry">
+                    <h2>New Entry</h2>
+                    <form method="POST" action="" class="form">
+                      {{ form.hidden_tag() }}
+                      <!--
+                      {% for field in form %}
+                          {% if field.errors  %}
+                              {% for error in field.errors %}
+                                  <div class="notification error">{{ error }}</div>
+                              {% endfor %}
+                          {% endif %}
+                          {{ field.label }}
+                          {{ field }}
+                      {% endfor %}
+                      -->
+
+
+                        <label for="title"> Title</label>
+                        <input id="title" type="text" name="title"><br>
+                        <label for="date">Date</label>
+                        <input id="date" type="date" name="date"><br>
+                        <label for="time_spent"> Time Spent</label>
+                        <input id="time_spent" type="text" name="time_spent"><br>
+                        <label for="what_you_lean">What I Learned</label>
+                        <textarea id="what_you_lean" rows="5" name="what_you_lean"></textarea>
+                        <label for="resource_to_remember">Resources to Remember</label>
+                        <textarea id="resource_to_remember" rows="5" name="resource_to_remember"></textarea>
+
+                        <button type="submit" id="submit" class="button">Publish Entry!</button>
+                        <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>
+
+                    </form>
+                </div>
+            </div>
+
+{% endblock %}
