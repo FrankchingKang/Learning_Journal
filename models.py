@@ -2,6 +2,7 @@ import datetime
 from peewee import *
 from slugify import slugify
 from flask_login import UserMixin
+from flask_bcrypt import generate_password_hash
 
 DATABASE = SqliteDatabase('journal.db')
 
@@ -38,6 +39,14 @@ class Journal(Model):
 class User(UserMixin, Model):
     username = CharField(unique = True)
     password = CharField()
+
+    @classmethod
+    def create_user(cls, username, password):
+        try:
+            with DATABASE.transaction():
+                cls.create(username = username, password = generate_password_hash(password))
+        except IntegrityError:
+            raise ValueError("User already exists")
 
     class Meta:
         database = DATABASE

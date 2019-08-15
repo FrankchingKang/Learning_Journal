@@ -1,7 +1,7 @@
 from flask_wtf import Form
 from wtforms import (StringField, DateField, IntegerField, TextField
-                        , TextAreaField)
-from wtforms.validators import DataRequired
+                        , TextAreaField, PasswordField)
+from wtforms.validators import DataRequired, EqualTo
 
 from models import Journal
 
@@ -17,3 +17,13 @@ class JournalForm(Form):
     resource_to_remember = TextAreaField('resource_to_remember',
         validators=[DataRequired()])
     tag = TextField('tag', validators=[DataRequired()])
+
+
+class RegisterForm(Form):
+    username = StringField('username', validators=[DataRequired()])
+    password = PasswordField(
+        'password',
+        validators=[DataRequired(),
+        EqualTo('password2', message='Passwords must match')
+        ])
+    paswordd2 = PasswordField('check password', validators=[DataRequired()])

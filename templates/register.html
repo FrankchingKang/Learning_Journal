@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+            <div class="container">
+                <div class="new-entry">
+                    <h2>Register</h2>
+                    <form method="POST" action="" class="form">
+                      {{ form.hidden_tag() }}
+                      {% for field in form %}
+                          {% if field.errors %}
+                              {% for error in field.errors %}
+                                  <div class="notification error">{{ error }}</div>
+                              {% endfor %}
+                          {% endif %}
+                          {{ field(placeholder=field.label.text) }}
+                      {% endfor %}
+                        <button type="submit" id="submit" class="button">Sing up!</button>
+                        <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>
+
+                    </form>
+                </div>
+            </div>
+
+{% endblock %}

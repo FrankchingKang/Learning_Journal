@@ -90,6 +90,17 @@ def delete(id):
     return redirect(url_for('index'))
 
 
+@app.route('/register')
+def register():
+    form = forms.RegisterForm()
+    if form.validate_on_submit():
+        flash("singup successfully")
+        models.User.create_user(username = form.username.data,
+            password=form.password.data)
+        return redirect(url_for('index'))
+    return render_template('register.html', form=form)
+
+
 
 if __name__ == '__main__':
     models.initialize()
@@ -101,6 +112,7 @@ if __name__ == '__main__':
                 what_you_lean = "web side flask",
                 resource_to_remember = "treehouse",
                 tag = "test")
+
     except ValueError:
         pass
 
