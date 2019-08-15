@@ -1,5 +1,6 @@
 from flask import Flask, g, render_template, redirect, flash, url_for
-
+from flask_bcrypt import check_password_hash
+from flask_login import LoginManager, login_user
 
 import forms
 import models
@@ -90,7 +91,7 @@ def delete(id):
     return redirect(url_for('index'))
 
 
-@app.route('/register')
+@app.route('/register',  methods=('GET', 'POST'))
 def register():
     form = forms.RegisterForm()
     if form.validate_on_submit():
@@ -100,6 +101,21 @@ def register():
         return redirect(url_for('index'))
     return render_template('register.html', form=form)
 
+@app.route('/login',  methods=('GET', 'POST'))
+def login():
+    form = forms.LoginForm()
+    if form.validate_on_submit():
+        try:
+            user = models.User.get(username==form.username.data)
+        except models.DoesNotExist:
+            flash('User is not exist!!')
+        if check_password_hash(password, form.password.data):
+            login_user(user)
+            flash("you are login!!")
+            return redirect(url_for('index'))
+        else:
+            flash("Pasword is not correct!!")
+    return render_template('login.html', form=form)
 
 
 if __name__ == '__main__':
