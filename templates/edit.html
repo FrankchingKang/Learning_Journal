@@ -15,6 +15,10 @@
                         <textarea id="what_you_lean" rows="5" name="what_you_lean">{{ journal.what_you_lean }}</textarea>
                         <label for="resource_to_remember">Resources to Remember</label>
                         <textarea id="resource_to_remember" rows="5" name="resource_to_remember" >{{ journal.resource_to_remember }}</textarea>
+                        <label for="tag">Tag</label>
+                        <input id="tag" type="text" name="tag" value="{{ journal.tag }}"><br>
+
+
                         <input type="submit" value="Publish Entry" class="button">
                         <a href="{{ url_for('detail', id=journal.id) }}" class="button button-secondary">Cancel</a>
                         {% if form.errors%}

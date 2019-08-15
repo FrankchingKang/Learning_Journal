@@ -16,4 +16,4 @@ class JournalForm(Form):
 
     resource_to_remember = TextAreaField('resource_to_remember',
         validators=[DataRequired()])
-    tag = TextField('tag')
+    tag = TextField('tag', validators=[DataRequired()])

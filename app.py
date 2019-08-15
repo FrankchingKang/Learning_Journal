@@ -28,10 +28,15 @@ def after_request(response):
 
 @app.route('/')
 @app.route('/entries')
+
 def index():
     journals = models.Journal.select()
     return render_template('index.html', journals = journals)
 
+@app.route('/entries/<tag>')
+def show_tag(tag):
+    journals = models.Journal.select().where(models.Journal.tag == tag)
+    return render_template('index.html', journals = journals)
 
 @app.route('/entries/new', methods=('GET', 'POST'))
 def new():
