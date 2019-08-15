@@ -7,7 +7,7 @@ from models import Journal
 
 class JournalForm(Form):
     title = StringField('title', validators=[DataRequired()])
-     # need more validator condations for date
+
     date = DateField('date', validators=[DataRequired()])
 
     time_spent = IntegerField('time_spent', validators=[DataRequired()])
@@ -16,3 +16,4 @@ class JournalForm(Form):
 
     resource_to_remember = TextAreaField('resource_to_remember',
         validators=[DataRequired()])
+    tag = TextField('tag')

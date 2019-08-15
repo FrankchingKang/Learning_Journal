@@ -43,7 +43,8 @@ def new():
             date = form.date.data,
             time_spent = form.time_spent.data,
             what_you_lean = form.what_you_lean.data,
-            resource_to_remember = form.resource_to_remember.data
+            resource_to_remember = form.resource_to_remember.data,
+            tag = form.tag.data
         )
         return redirect(url_for('index'))
 
@@ -66,7 +67,8 @@ def edit(id):
             title = form.title.data,
             date = form.date.data,
             time_spent = form.time_spent.data,
-            resource_to_remember = form.resource_to_remember.data
+            resource_to_remember = form.resource_to_remember.data,
+            tag = form.tag.data
         ).where(models.Journal.id == id)
         q.execute()
         # from end
@@ -77,9 +79,7 @@ def edit(id):
 @app.route('/entries/<int:id>/delete')
 def delete(id):
     try:
-
         models.Journal.get(models.Journal.id == id).delete_instance()
-
     except models.IntegrityError:
         flash("IntegrityError")
 
