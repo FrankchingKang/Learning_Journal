@@ -26,11 +26,10 @@ class RegisterForm(Form):
         validators=[DataRequired(),
         EqualTo('password2', message='Passwords must match')
         ])
-    paswordd2 = PasswordField('check password', validators=[DataRequired()])
+    password2 = PasswordField('check password', validators=[DataRequired()])
 
 
 
 class LoginForm(Form):
     username = StringField('username', validators=[DataRequired()])
     password = PasswordField('Password', validators = [DataRequired()])
-    

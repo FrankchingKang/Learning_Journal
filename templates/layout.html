@@ -22,12 +22,23 @@
             <div class="container">
                 <div class="site-header">
                     <a class="logo" href="{{ url_for('index') }}"><i class="material-icons">library_books</i></a>
-                    <a class="button icon-right" href="{{ url_for('new') }}"><span>New Entry</span> <i class="material-icons">add</i></a>
+                    {% if current_user.is_authenticated %}
+                      <a href="{{ url_for('logout') }}" title="Log out">Log out</a>
+                      <a class="button icon-right" href="{{ url_for('new') }}"><span>New Entry</span> <i class="material-icons">add</i></a>
+                    {% else %}
+                      <a href="{{ url_for('login') }}" title="Log out">Log in</a>
+                      <a href="{{ url_for('register') }}" title="Sing up">Sing up</a>
+                    {% endif %}
                 </div>
             </div>
         </header>
 
         <section>
+            {% if current_user.is_authenticated %}
+            <div class="edit">
+              <h2> Hello {{ current_user.username }} !</h2>
+            </div>
+            {% endif %}
             {% block content %}{% endblock %}
         </section>
         <footer>

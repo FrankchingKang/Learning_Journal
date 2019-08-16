@@ -15,7 +15,9 @@
                       {% endfor %}
                         <button type="submit" id="submit" class="button">Sing up!</button>
                         <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>
-
+                        {% if form.errors%}
+                          {{ form.errors }}
+                        {% endif %}
                     </form>
                 </div>
             </div>
