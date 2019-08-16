@@ -69,9 +69,9 @@ def new():
     return render_template('new.html', form = form)
 
 
-@app.route('/entries/<int:id>')
-def detail(id):
-    journal = models.Journal.get(models.Journal.id == id)
+@app.route('/entries/<slug>')
+def detail(slug):
+    journal = models.Journal.get(models.Journal.slug == slug)
     return render_template('detail.html', journal = journal)
 
 @app.route('/entries/<int:id>/edit', methods=('GET', 'POST'))
