@@ -36,12 +36,13 @@ class Journal(Model):
         except IntegrityError:
             raise ValueError("title already exists")
 
-    def save(self,force_insert=False):
-        try:
-            super().save()
-        except IntegrityError:
-            raise ValueError("title already exists")
 
+class Tag(Model):
+    tag_on_journal = ForeignKeyField(Journal, related_name="Tag_on_journal")
+    tag_name = TextField()
+
+    class Meta:
+        database = DATABASE
 
 
 
@@ -52,11 +53,9 @@ class User(UserMixin, Model):
 
     @classmethod
     def create_user(cls, username, password):
-        try:
-            with DATABASE.transaction():
-                cls.create(username = username, password = generate_password_hash(password))
-        except IntegrityError:
-            raise ValueError("User already exists")
+        with DATABASE.transaction():
+            cls.create(username = username, password = generate_password_hash(password))
+
 
     class Meta:
         database = DATABASE

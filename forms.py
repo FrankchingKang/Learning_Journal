@@ -24,7 +24,7 @@ class RegisterForm(Form):
     password = PasswordField(
         'password',
         validators=[DataRequired(),
-        EqualTo('password2', message='Passwords must match')
+        EqualTo('password2', message='Passwords most be match')
         ])
     password2 = PasswordField('check password', validators=[DataRequired()])
 

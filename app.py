@@ -94,7 +94,7 @@ def edit(slug):
         journal.slug = slugify(form.title.data)
         try:
             journal.save()
-        except ValueError:
+        except models.IntegrityError:
             flash('Title already exists')
             return render_template('edit.html', form=form , journal=journal)
         # from end
@@ -115,12 +115,14 @@ def delete(slug):
 def register():
     form = forms.RegisterForm()
     if form.validate_on_submit():
-        flash("singup successfully")
-        models.User.create_user(username = form.username.data,
-            password=form.password.data)
+        try:
+            models.User.create_user(username = form.username.data,
+                password=form.password.data)
+        except models.IntegrityError:
+            flash("Existing User! Please use another name")
+            return render_template('register.html', form=form)
         return redirect(url_for('index'))
-    else:
-        flash('register fail')
+
     return render_template('register.html', form=form)
 
 @app.route('/login',  methods=('GET', 'POST'))
