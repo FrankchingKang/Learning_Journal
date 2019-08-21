@@ -10,13 +10,6 @@
         <link rel="stylesheet" href="/static/css/normalize.css">
         <link rel="stylesheet" href="/static/css/site.css">
     </head>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="notification">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
     <body>
         <header>
             <div class="container">
@@ -32,13 +25,19 @@
                 </div>
             </div>
         </header>
-
         <section>
             {% if current_user.is_authenticated %}
             <div class="edit">
               <h2> Hello {{ current_user.username }} !</h2>
             </div>
             {% endif %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="edit">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             {% block content %}{% endblock %}
         </section>
         <footer>

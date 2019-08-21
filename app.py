@@ -2,6 +2,7 @@ from flask import Flask, g, render_template, redirect, flash, url_for
 from flask_bcrypt import check_password_hash
 from flask_login import (LoginManager, login_user, current_user, logout_user,
                             login_required)
+from slugify import slugify
 
 import forms
 import models
@@ -42,6 +43,7 @@ def after_request(response):
 
 @app.route('/')
 @app.route('/entries')
+@app.route('/entries/')
 def index():
     journals = models.Journal.select()
     return render_template('index.html', journals = journals)
@@ -55,17 +57,20 @@ def show_tag(tag):
 def new():
     form = forms.JournalForm()
     if form.validate_on_submit():
-        flash(" submit success!! ")
-        models.Journal.create_journal(
-            title = form.title.data,
-            date = form.date.data,
-            time_spent = form.time_spent.data,
-            what_you_lean = form.what_you_lean.data,
-            resource_to_remember = form.resource_to_remember.data,
-            tag = form.tag.data
-        )
+        #flash(" Submit success!! ")
+        try:
+            models.Journal.create_journal(
+                title = form.title.data,
+                date = form.date.data,
+                time_spent = form.time_spent.data,
+                what_you_lean = form.what_you_lean.data,
+                resource_to_remember = form.resource_to_remember.data,
+                tag = form.tag.data
+            )
+        except ValueError:
+            flash('Title already exists')
+            return render_template('new.html', form = form)
         return redirect(url_for('index'))
-
     return render_template('new.html', form = form)
 
 
@@ -74,29 +79,32 @@ def detail(slug):
     journal = models.Journal.get(models.Journal.slug == slug)
     return render_template('detail.html', journal = journal)
 
-@app.route('/entries/<int:id>/edit', methods=('GET', 'POST'))
-def edit(id):
+@app.route('/entries/<slug>/edit', methods=('GET', 'POST'))
+def edit(slug):
     form = forms.JournalForm()
-    journal = models.Journal.get(models.Journal.id == id)
+    journal = models.Journal.get(models.Journal.slug == slug)
     if form.validate_on_submit():
         # from update query http://docs.peewee-orm.com/en/latest/peewee/api.html#Model.update
-        q = models.Journal.update(
-            title = form.title.data,
-            date = form.date.data,
-            time_spent = form.time_spent.data,
-            resource_to_remember = form.resource_to_remember.data,
-            tag = form.tag.data
-        ).where(models.Journal.id == id)
-        q.execute()
+        journal.title = form.title.data
+        journal.date = form.date.data
+        journal.time_spent = form.time_spent.data
+        journal.what_you_lean = form.what_you_lean.data
+        journal.resource_to_remember = form.resource_to_remember.data
+        journal.tag = form.tag.data
+        journal.slug = slugify(form.title.data)
+        try:
+            journal.save()
+        except ValueError:
+            flash('Title already exists')
+            return render_template('edit.html', form=form , journal=journal)
         # from end
-        return redirect(url_for('detail', id=journal.id))
-
+        return redirect(url_for('detail', slug=slugify(form.title.data)))
     return render_template('edit.html', form=form , journal=journal)
 
-@app.route('/entries/<int:id>/delete')
-def delete(id):
+@app.route('/entries/<slug>/delete')
+def delete(slug):
     try:
-        models.Journal.get(models.Journal.id == id).delete_instance()
+        models.Journal.get(models.Journal.slug == slug).delete_instance()
     except models.IntegrityError:
         flash("IntegrityError")
 
