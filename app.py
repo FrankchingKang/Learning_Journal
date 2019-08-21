@@ -70,6 +70,11 @@ def new():
         except ValueError:
             flash('Title already exists')
             return render_template('new.html', form = form)
+        models.Tag.create(
+            tag_on_journal = models.Journal.get(
+                models.Journal.title == form.title.data),
+            tag_name = form.tag.data
+        )
         return redirect(url_for('index'))
     return render_template('new.html', form = form)
 
@@ -83,6 +88,9 @@ def detail(slug):
 def edit(slug):
     form = forms.JournalForm()
     journal = models.Journal.get(models.Journal.slug == slug)
+    tag = models.Tag.get(
+            models.Tag.tag_on_journal == journal,
+            models.Tag.tag_name == journal.tag)
     if form.validate_on_submit():
         # from update query http://docs.peewee-orm.com/en/latest/peewee/api.html#Model.update
         journal.title = form.title.data
@@ -90,9 +98,13 @@ def edit(slug):
         journal.time_spent = form.time_spent.data
         journal.what_you_lean = form.what_you_lean.data
         journal.resource_to_remember = form.resource_to_remember.data
-        journal.tag = form.tag.data
+        if journal.tag != form.tag.data:
+            tag.tag_name = form.tag.data
+            journal.tag = form.tag.data
+
         journal.slug = slugify(form.title.data)
         try:
+            tag.save()
             journal.save()
         except models.IntegrityError:
             flash('Title already exists')
@@ -103,8 +115,13 @@ def edit(slug):
 
 @app.route('/entries/<slug>/delete')
 def delete(slug):
+    journal = models.Journal.get(models.Journal.slug == slug)
     try:
-        models.Journal.get(models.Journal.slug == slug).delete_instance()
+        models.Tag.get(
+            models.Tag.tag_on_journal == journal,
+            models.Tag.tag_name == journal.tag
+            ).delete_instance()
+        journal.delete_instance()
     except models.IntegrityError:
         flash("IntegrityError")
 

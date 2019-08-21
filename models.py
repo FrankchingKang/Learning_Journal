@@ -64,5 +64,5 @@ class User(UserMixin, Model):
 
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([Journal, User], safe=True)
+    DATABASE.create_tables([Journal, User, Tag], safe=True)
     DATABASE.close()
