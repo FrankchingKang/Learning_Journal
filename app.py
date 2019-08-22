@@ -138,8 +138,9 @@ def register():
         except models.IntegrityError:
             flash("Existing User! Please use another name")
             return render_template('register.html', form=form)
+        user = models.User.get(models.User.username==form.username.data)
+        login_user(user)
         return redirect(url_for('index'))
-
     return render_template('register.html', form=form)
 
 @app.route('/login',  methods=('GET', 'POST'))
