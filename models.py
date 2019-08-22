@@ -37,6 +37,8 @@ class Journal(Model):
             raise ValueError("title already exists")
 
 
+
+
 class Tag(Model):
     tag_on_journal = ForeignKeyField(Journal, related_name="Tag_on_journal")
     tag_name = TextField()

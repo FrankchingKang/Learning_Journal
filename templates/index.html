@@ -11,7 +11,12 @@
                   <article>
                       <h2><a href="{{ url_for('detail', slug = journal.slug) }}">{{ journal.title }}</a></h2>
                       <time datetime="{{ journal.date }}">{{ journal.date }}</time>
-                      <p><a href="{{ url_for('show_tag', tag = journal.tag) }}">tag:  {{ journal.tag }} </a></p>
+                      {% for tag in tags%}
+                        {% if tag.tag_on_journal.title == journal.title %}
+                          <p><a href="{{ url_for('show_tag', tag = tag.tag_name) }}">tag:  {{ tag.tag_name }} </a></p>
+                        {% endif %}
+                      {% endfor %}
+
                   </article>
                   {% endfor %}
                 </div>

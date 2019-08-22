@@ -46,12 +46,17 @@ def after_request(response):
 @app.route('/entries/')
 def index():
     journals = models.Journal.select()
-    return render_template('index.html', journals = journals)
+    tags = models.Tag.select()
+    return render_template('index.html', journals = journals, tags = tags)
 
 @app.route('/entries/tag/<tag>')
 def show_tag(tag):
-    journals = models.Journal.select().where(models.Journal.tag == tag)
-    return render_template('index.html', journals = journals)
+    tags = models.Tag.select().where(models.Tag.tag_name == tag)
+    Journal = models.Journal.select().join(
+        models.Tag, on=(models.Tag.tag_on_journal == models.Journal.id)
+    ).where(models.Tag.tag_name == tag)
+
+    return render_template('index.html', journals = Journal, tags = tags)
 
 @app.route('/entries/new', methods=('GET', 'POST'))
 def new():
