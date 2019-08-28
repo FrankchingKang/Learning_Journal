@@ -1,7 +1,7 @@
 from flask import Flask, g, render_template, redirect, flash, url_for
 from flask_bcrypt import check_password_hash
 from flask_login import (LoginManager, login_user, current_user, logout_user,
-                            login_required)
+                            login_required, current_user)
 from slugify import slugify
 
 import forms
@@ -59,6 +59,7 @@ def show_tag(tag):
     return render_template('index.html', journals = Journal, tags = tags)
 
 @app.route('/entries/new', methods=('GET', 'POST'))
+@login_required
 def new():
     form = forms.JournalForm()
     if form.validate_on_submit():
@@ -119,6 +120,7 @@ def edit(slug):
     return render_template('edit.html', form=form , journal=journal)
 
 @app.route('/entries/<slug>/delete')
+@login_required
 def delete(slug):
     journal = models.Journal.get(models.Journal.slug == slug)
     try:
