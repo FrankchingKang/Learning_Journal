@@ -91,6 +91,7 @@ def detail(slug):
     return render_template('detail.html', journal = journal)
 
 @app.route('/entries/<slug>/edit', methods=('GET', 'POST'))
+@login_required
 def edit(slug):
     form = forms.JournalForm()
     journal = models.Journal.get(models.Journal.slug == slug)
